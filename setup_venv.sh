@@ -13,8 +13,15 @@
 # if you run the script from a conda env it will install in your conda env
 
 TD="$(cd $(dirname $0) && pwd)"
+
+PYTHON3_11=$(command -v python3.11)
+
 if [ -z "$PYTHON" ]; then
-  PYTHON="$(which python3)"
+  if [ -x "$PYTHON3_11" ]; then
+    PYTHON="$PYTHON3_11"
+  else
+    PYTHON="$(which python3)"
+  fi
 fi
 
 function die() {
