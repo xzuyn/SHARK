@@ -12,7 +12,7 @@
 # NO_BACKEND=1 #Don't install iree or shark backend
 # if you run the script from a conda env it will install in your conda env
 
-TD="$(cd $(dirname $0) && pwd)"
+TD="$(cd "$(dirname "$0")" && pwd)"
 
 PYTHON3_11=$(command -v python3.11)
 
@@ -29,7 +29,7 @@ function die() {
   exit 1
 }
 
-PYTHON_VERSION_X_Y=`${PYTHON} -c 'import sys; version=sys.version_info[:2]; print("{0}.{1}".format(*version))'`
+PYTHON_VERSION_X_Y="$(${PYTHON} -c 'import sys; version=sys.version_info[:2]; print("{0}.{1}".format(*version))')"
 
 echo "Python: $PYTHON"
 echo "Python version: $PYTHON_VERSION_X_Y"
@@ -52,9 +52,9 @@ if [[ "$SKIP_VENV" != "1" ]]; then
   fi
 fi
 
-Red=`tput setaf 1`
-Green=`tput setaf 2`
-Yellow=`tput setaf 3`
+Red=(tput setaf 1)
+Green=(tput setaf 2)
+Yellow=(tput setaf 3)
 
 # Upgrade pip and install requirements.
 $PYTHON -m pip install --upgrade pip || die "Could not upgrade pip"
@@ -62,10 +62,13 @@ $PYTHON -m pip install --upgrade -r "$TD/requirements.txt"
 if [[ $(uname -s) = 'Darwin' ]]; then
   echo "MacOS detected. Installing torch-mlir from .whl, to avoid dependency problems with torch."
   $PYTHON -m pip uninstall -y timm #TEMP FIX FOR MAC
-  $PYTHON -m pip install --pre --no-cache-dir torch-mlir -f https://llvm.github.io/torch-mlir/package-index/ -f https://download.pytorch.org/whl/nightly/torch/
+  if $PYTHON -m pip install --pre --no-cache-dir torch-mlir -f https://llvm.github.io/torch-mlir/package-index/ -f https://download.pytorch.org/whl/nightly/torch/; then
+    echo "Successfully Installed torch-mlir"
+  else
+    echo "Could not install torch-mlir" >&2
+  fi
 else
-  $PYTHON -m pip install --pre torch-mlir -f https://llvm.github.io/torch-mlir/package-index/
-  if [ $? -eq 0 ];then
+  if $PYTHON -m pip install --pre torch-mlir -f https://llvm.github.io/torch-mlir/package-index/; then
     echo "Successfully Installed torch-mlir"
   else
     echo "Could not install torch-mlir" >&2
