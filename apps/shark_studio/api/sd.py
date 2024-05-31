@@ -339,7 +339,7 @@ def shark_sd_fn(
                 }
             else:
                 adapters[f"control_adapter_{model}"] = {
-                    "hf_id": control_adapter_map["stabilityai/stable-diffusion-xl-1.0"][
+                    "hf_id": control_adapter_map["stabilityai/stable-diffusion-xl-base-1.0"][
                         model
                     ],
                     "strength": controlnets["strength"][i],
